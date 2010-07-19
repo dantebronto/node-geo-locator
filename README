@@ -6,6 +6,6 @@ start the server with `node api.js`
 
 query the service like:
 
-$.getJSON('http://service_address.com/ip/65.50.37.249?callback=?', function(data){ 
+$.getJSON('http://service_address.com/ip/w.x.y.z?callback=?', function(data){ 
   console.log(data.city)
 })
