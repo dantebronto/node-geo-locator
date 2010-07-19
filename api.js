@@ -15,15 +15,8 @@ client.open(function(err, client){
 
 var IPLocator = { 
   do_lookup: function(env){
-    var ipnum
-    
-    try {
-      ipnum = ip_locator.calculate_ipnum( env.ip || env.parsed_url().query.ip || env.remoteAddress)
-    } catch(ex) {
-      // env.handle_exception(ex)
-      env.on_screen({ body: 'Invalid IP' })
-      return
-    }
+    var ip = env.ip || env.parsed_url().ip || env.remoteAddress
+    var ipnum = IPLocator.calculate_ipnum( ip )
     
     // find ip block
     db.blocks.findOne({ start_ip_num: { '$lte': ipnum }, end_ip_num: { '$gte': ipnum } }, function(err, res){
@@ -49,11 +42,13 @@ var IPLocator = {
   }
 }
 
-// define picard routes, they're all handled the same way:
-// GET /?ip=65.50.39.249
-// GET /ip/65.50.39.249
-// POST ?ip=65.50.39.249
+// define Picard routes, they all have the same handler, do_lookup:
 
-get('/', ip_locator.do_lookup)
-post('/', ip_locator.do_lookup)
-get('/ip/:ip', ip_locator.do_lookup)
+// GET /?ip=65.50.39.249
+get('/', IPLocator.do_lookup)
+
+// GET /ip/65.50.39.249
+get('/ip/:ip', IPLocator.do_lookup)
+
+// POST ?ip=65.50.39.249
+post('/', IPLocator.do_lookup)
