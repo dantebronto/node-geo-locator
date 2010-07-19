@@ -1,0 +1,11 @@
+install and start mongo db
+gem install mongo_mapper
+gem install bson_ext
+run `ruby load_data.rb` to initialize the database
+start the server with `node api.js`
+
+query the service like:
+
+$.getJSON('http://service_address.com/ip/65.50.37.249?callback=?', function(data){ 
+  console.log(data.city)
+})

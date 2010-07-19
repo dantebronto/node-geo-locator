@@ -23,9 +23,20 @@ var IPLocator = {
       if ( res && res.location_id ){
         // find location data
         db.locations.findOne({ location_id: res.location_id }, function(err, geo){
+          var type, body
+          var q = env.parsed_url().query
+          var body = JSON.stringify(geo)
+          
+          if( q && q.callback ){
+            type = 'application/javascript'
+            body = q.callback  + '(' + body + ')'
+          } else {
+            type = 'application/json'
+          }
+          
           env.on_screen({
-            type: 'application/json',
-            body: sys.inspect(geo)
+            type: type,
+            body: body
           })   
         })
       } else {
@@ -37,6 +48,7 @@ var IPLocator = {
     })
   },
   calculate_ipnum: function(ip){
+    if( typeof ip == 'undefined' ){ return 0 }
     ip = ip.split('.')
     return Number(ip[0]) * 16777216 + Number(ip[1]) * 65536 + Number(ip[2]) * 256 + Number(ip[3])
   }
@@ -52,3 +64,9 @@ get('/ip/:ip', IPLocator.do_lookup)
 
 // POST ?ip=65.50.39.249
 post('/', IPLocator.do_lookup)
+
+// on the front-end, you could do
+
+// $.getJSON('http://apihost.com/ip/<your-ip>?callback=?', function(data){ 
+//   console.log(data.city)
+// })
